@@ -1,0 +1,70 @@
+<div class="auth-container">
+  <div class="auth-card register-mode">
+    
+    <div class="logo-container">
+      <img src="icons/LogoSkiOx.png" alt="SkiOx Logo" class="logo-img">
+    </div>
+    
+    <div class="card-header">
+      <h1>Inscription</h1>
+      <p>Créez votre profil station</p>
+    </div>
+
+    <div *ngIf="error" class="error-banner">
+      {{ error }}
+    </div>
+
+    <form (ngSubmit)="onSubmit()" class="auth-form">
+      
+      <div class="form-row">
+        <div class="field">
+          <label>Nom</label>
+          <input type="text" [(ngModel)]="nom" name="nom" placeholder="Votre nom" required>
+        </div>
+        <div class="field">
+          <label>Prénom</label>
+          <input type="text" [(ngModel)]="prenom" name="prenom" placeholder="Votre prénom" required>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label>Date de naissance</label>
+          <input type="date" [(ngModel)]="date_naissance" name="date_naissance" required>
+        </div>
+        <div class="field">
+          <label>Sexe</label>
+          <select [(ngModel)]="sexe" name="sexe">
+            <option [ngValue]="true">Homme</option>
+            <option [ngValue]="false">Femme</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Rôle envisagé</label>
+        <div class="select-wrapper">
+          <select [(ngModel)]="role" name="role">
+            <option value="1">⛷️ Sportif</option>
+            <option value="2">⛑️ Sauveteur</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Mot de passe</label>
+        <input type="password" [(ngModel)]="password" name="password" placeholder="••••••••" required>
+      </div>
+
+      <button type="submit" class="btn-submit">
+        S'inscrire
+      </button>
+
+    </form>
+
+    <div class="footer-links">
+      <a routerLink="/login">Déjà un compte ? <strong>Se connecter</strong></a>
+    </div>
+
+  </div>
+</div>

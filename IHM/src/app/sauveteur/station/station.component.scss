@@ -1,0 +1,98 @@
+.weather-card {
+  background: linear-gradient(135deg, #699E8E 0%, #396C81 100%) !important;
+}
+
+.icon-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.equipment-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  /* position: relative est déjà dans le HTML, c'est bien */
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05) !important;
+  }
+}
+
+/* --- BOUTON CROIX ROUGE CORRIGÉ ET RENFORCÉ --- */
+.btn-icon {
+  /* 1. Réinitialisation complète des styles de bouton par défaut */
+  appearance: none;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+
+  /* 2. Dimensions et forme fixes */
+  width: 34px;  /* Légèrement plus grand */
+  height: 34px;
+  border-radius: 50%;
+  
+  /* 3. Style visuel : Rond blanc avec bordure et icône rouges */
+  background-color: #ffffff;
+  color: #dc3545; /* Rouge Bootstrap */
+  border: 2px solid #dc3545; /* Bordure solide pour la visibilité */
+  box-shadow: 0 3px 6px rgba(0,0,0,0.15); /* Ombre portée plus marquée */
+  
+  /* 4. Centrage parfait de l'icône */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* 5. Positionnement et transition */
+  z-index: 99; /* Très haut pour passer au-dessus de tout */
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Petit effet rebond */
+
+  /* Force la taille de l'icône à l'intérieur */
+  i {
+      font-size: 1.2rem; /* Taille d'icône explicite */
+      line-height: 1;
+      display: block;
+  }
+
+  /* 6. États au survol et focus */
+  &:hover {
+    background-color: #dc3545; /* Le fond devient rouge */
+    color: #ffffff;            /* L'icône devient blanche */
+    transform: scale(1.15) rotate(90deg); /* Effet de rotation sympa */
+    box-shadow: 0 6px 12px rgba(220, 53, 69, 0.4);
+  }
+  
+  &:focus-visible {
+    box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.3);
+  }
+}
+
+/* MODALS */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1050;
+}
+
+.modal.d-block {
+  display: block;
+  background: transparent;
+  overflow-x: hidden;
+  overflow-y: auto;
+  z-index: 1055;
+}
+
+.list-group-item {
+    transition: background-color 0.2s;
+    &:hover:not([disabled]) {
+        background-color: #f8f9fa;
+    }
+}
+
+.bg-success-subtle { background-color: #d1e7dd; color: #0f5132; }
+.border-success-subtle { border-color: #badbcc; }

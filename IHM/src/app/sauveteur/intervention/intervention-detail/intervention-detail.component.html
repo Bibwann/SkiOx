@@ -1,0 +1,98 @@
+<div class="container-fluid p-0">
+    <div class="bg-white border-bottom p-3 mb-3 sticky-top">
+        <div class="d-flex align-items-center">
+            <a routerLink="/sauveteur/intervention" class="btn btn-outline-secondary me-3">
+                <i class="bi bi-arrow-left"></i> Retour
+            </a>
+            <h4 class="mb-0">Détail Intervention #{{ id }}</h4>
+        </div>
+    </div>
+
+    <div *ngIf="!victime" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-2 text-muted">Récupération des données vitales...</p>
+    </div>
+
+    <div class="row g-3 p-3" *ngIf="victime">
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-3">
+                <div class="card-body p-0 position-relative">
+                    <div id="map" class="map-container"></div>
+                    
+                    <div class="position-absolute top-0 end-0 m-3 bg-white px-3 py-2 rounded shadow-sm" style="z-index: 999;">
+                        <small class="text-muted d-block">Temps écoulé</small>
+                        <span class="fs-4 fw-bold text-danger">{{ elapsed$ | async }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-grid" *ngIf="!isPast">
+                <button class="btn btn-success btn-lg" (click)="confirmFinish()">
+                    <i class="bi bi-check-lg me-2"></i>
+                    Clôturer l'intervention / Sauvetage effectué
+                </button>
+            </div>
+            <div *ngIf="isPast" class="alert alert-secondary text-center">
+                Intervention terminée
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">Fiche Victime</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <div class="avatar-placeholder bg-light rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center">
+                            <i class="bi bi-person fs-1 text-secondary"></i>
+                        </div>
+                        <h4>{{ victime.prenom }} {{ victime.nom }}</h4>
+                        <span class="badge bg-secondary">{{ victime.age }} ans</span>
+                        <span class="badge bg-secondary ms-1">{{ victime.sexe }}</span>
+                    </div>
+
+                    <hr>
+
+                    <h6 class="text-muted text-uppercase small mb-3">Constantes (Temps réel)</h6>
+                    <div class="row g-2 mb-4">
+                        <div class="col-6">
+                            <div class="p-3 bg-light rounded text-center">
+                                <small class="d-block text-muted">Rythme Cardiaque</small>
+                                <span class="fs-3 fw-bold text-danger">{{ victime.bpm }}</span> <small>bpm</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 bg-light rounded text-center">
+                                <small class="d-block text-muted">Oxygène</small>
+                                <span class="fs-3 fw-bold text-primary">{{ victime.o2 }}</span> <small>%</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h6 class="text-muted text-uppercase small mb-3">Dossier Médical</h6>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span>Groupe Sanguin</span>
+                            <span class="fw-bold">{{ victime.groupe_sanguin || 'N/A' }}</span>
+                        </li>
+                        <li class="list-group-item px-0">
+                            <span class="d-block mb-1">Pathologies connues</span>
+                            <div class="alert alert-warning py-2 mb-0" *ngIf="victime.pathologies">
+                                <i class="bi bi-exclamation-triangle me-2"></i>{{ victime.pathologies }}
+                            </div>
+                            <span class="text-muted small" *ngIf="!victime.pathologies">Aucune</span>
+                        </li>
+                        <li class="list-group-item px-0">
+                            <span class="d-block mb-1">Traitements en cours</span>
+                            <div class="p-2 bg-light rounded border" *ngIf="victime.traitements">
+                                {{ victime.traitements }}
+                            </div>
+                            <span class="text-muted small" *ngIf="!victime.traitements">Aucun</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

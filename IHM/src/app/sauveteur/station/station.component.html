@@ -1,0 +1,170 @@
+<div class="container-fluid py-3">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0 text-dark">Station</h2>
+    <div class="user-info text-end">
+      <small class="text-muted d-block">Connecté en tant que</small>
+      <span class="fw-bold text-primary">{{ user?.prenom }} {{ user?.nom }}</span>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-4">
+      
+      <div class="card shadow-sm border-0 rounded-4 mb-4">
+        <div class="card-body p-4">
+          <label class="form-label text-uppercase fw-bold text-muted small">Choisir une station</label>
+          <select class="form-select form-select-lg mb-3 border-0 bg-light" 
+                  [(ngModel)]="selectedStationId" (change)="onStationChange()">
+            <option *ngFor="let station of stations" [value]="station.id">
+              {{ station.nom }}
+            </option>
+          </select>
+          
+          <div *ngIf="selectedStation" class="d-flex align-items-center text-muted">
+            <i class="bi bi-geo-alt-fill me-2 text-danger"></i>
+            <span>{{ selectedStation.localisation }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card shadow-sm border-0 rounded-4 bg-primary text-white weather-card">
+        <div class="card-body p-4">
+          <h5 class="card-title mb-4"><i class="bi bi-cloud-sun me-2"></i>Météo en direct</h5>
+          
+          <div *ngIf="meteoLoading" class="text-center py-4">
+            <div class="spinner-border text-white" role="status"></div>
+          </div>
+
+          <div *ngIf="!meteoLoading && meteo" class="weather-info">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="display-4 fw-bold">{{ meteo.temperature }}°</span>
+              <div class="text-end">
+                <div class="fs-5">{{ meteo.condition }}</div>
+                <small class="opacity-75">Vent: {{ meteo.windSpeed }} km/h</small>
+              </div>
+            </div>
+            
+            <div class="alert bg-white bg-opacity-10 border-0 text-white mb-0">
+               <span><i class="bi bi-exclamation-triangle me-2"></i>Avalanche: {{ meteo.risqueAvalanche || 'N/A' }}/5</span>
+            </div>
+          </div>
+
+          <div *ngIf="!meteoLoading && !meteo" class="text-center opacity-75">
+            Données météo non disponibles.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-8">
+      <div class="card shadow-sm border-0 rounded-4 h-100">
+        <div class="card-header bg-white border-0 py-3 px-4 d-flex justify-content-between align-items-center">
+          <h5 class="mb-0 fw-bold">Équipement station</h5>
+          <button class="btn btn-primary rounded-pill px-3" (click)="showAddModal = true" [disabled]="!selectedStationId">
+            <i class="bi bi-plus-lg me-1"></i> Ajouter
+          </button>
+        </div>
+        
+        <div class="card-body p-4">
+          <div *ngIf="loadingEquipments" class="text-center py-5">
+            <div class="spinner-border text-primary" role="status"></div>
+          </div>
+
+          <div *ngIf="!loadingEquipments && stationEquipments.length === 0" class="text-center py-5 text-muted">
+            <i class="bi bi-box-seam fs-1 d-block mb-3 opacity-25"></i>
+            Aucun équipement assigné à cette station.
+          </div>
+
+          <div *ngIf="!loadingEquipments && stationEquipments.length > 0" class="row g-3">
+            <div *ngFor="let equipment of stationEquipments" class="col-md-6 col-xl-4">
+              <div class="card equipment-card h-100 border-0 bg-light">
+                <div class="card-body text-center p-4 position-relative">
+                  
+                  <button type="button" 
+                          class="btn-icon position-absolute top-0 end-0 m-2" 
+                          (click)="confirmDelete(equipment.id)" 
+                          title="Retirer de la station">
+                    X
+                  </button>
+
+                  <div class="icon-circle bg-white shadow-sm mb-3 mx-auto d-flex align-items-center justify-content-center">
+                    <i class="bi bi-snow text-primary fs-4"></i>
+                  </div>
+                  
+                  <h6 class="fw-bold mb-1">{{ equipment.name }}</h6>
+                  <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill small">
+                    En stock
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="showAddModal" class="modal-backdrop fade show" (click)="showAddModal = false"></div>
+  <div *ngIf="showAddModal" class="modal d-block fade show" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header border-0">
+          <h5 class="modal-title fw-bold">Ajouter au stock station</h5>
+          <button type="button" class="btn-close" (click)="showAddModal = false"></button>
+        </div>
+        
+        <div class="modal-body p-0" style="max-height: 60vh; overflow-y: auto;">
+          <div class="list-group list-group-flush">
+            <button *ngFor="let eq of allEquipments" 
+                    class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3 px-4"
+                    (click)="!isEquipmentInStation(eq.id) ? addEquipmentToStation(eq.id) : null"
+                    [disabled]="isEquipmentInStation(eq.id)"
+                    [class.bg-light]="isEquipmentInStation(eq.id)">
+              
+              <span class="fw-medium">{{ eq.name }}</span>
+              
+              <span *ngIf="isEquipmentInStation(eq.id)" class="badge bg-success">
+                <i class="bi bi-check-lg me-1"></i> Présent
+              </span>
+              
+              <span *ngIf="!isEquipmentInStation(eq.id)" class="btn btn-sm btn-outline-primary rounded-pill">
+                Ajouter <i class="bi bi-plus-lg ms-1"></i>
+              </span>
+            </button>
+          </div>
+          
+          <div *ngIf="allEquipments.length === 0" class="text-center py-4 text-muted">
+            Catalogue vide.
+          </div>
+        </div>
+        
+        <div class="modal-footer border-0 bg-light">
+            <button type="button" class="btn btn-secondary px-4" (click)="showAddModal = false">Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="showDeleteModal" class="modal-backdrop fade show" (click)="closeDeleteModal()"></div>
+  <div *ngIf="showDeleteModal" class="modal d-block fade show" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-body text-center p-4">
+          <div class="mb-3 text-danger">
+            <i class="bi bi-exclamation-circle fs-1"></i>
+          </div>
+          <h5 class="fw-bold mb-2">Retirer l'équipement ?</h5>
+          <p class="text-muted mb-4">
+            Voulez-vous vraiment retirer cet équipement de l'inventaire de la station 
+            <strong>{{ selectedStation?.nom }}</strong> ?
+          </p>
+          <div class="d-flex justify-content-center gap-2">
+            <button type="button" class="btn btn-light px-4" (click)="closeDeleteModal()">Annuler</button>
+            <button type="button" class="btn btn-danger px-4" (click)="deleteEquipment()">Retirer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

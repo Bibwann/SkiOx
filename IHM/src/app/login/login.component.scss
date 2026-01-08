@@ -1,0 +1,213 @@
+/* --- VARIABLES --- */
+:root {
+  --color-primary: #396C81;
+  --color-accent: #699E8E;
+  --gradient-main: linear-gradient(135deg, #396C81 0%, #699E8E 100%);
+  --text-dark: #333;
+  --bg-input: #f9f9f9;
+}
+
+/* Animation douce à l'arrivée */
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- CONTENEUR GLOBAL --- */
+.auth-container {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gradient-main);
+  padding: 1rem;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+/* --- LA CARTE --- */
+.auth-card {
+  background: white;
+  width: 100%;
+  max-width: 420px; /* Un peu moins large que le register car moins de champs */
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  position: relative;
+  /* Active l'animation */
+  animation: slideIn 0.6s ease-out;
+}
+
+/* --- LOGO --- */
+.logo-container {
+  text-align: center;
+  padding-top: 2rem;
+  padding-bottom: 0.5rem;
+}
+
+.logo-img {
+  max-width: 120px;
+  height: auto;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.logo-img:hover {
+  transform: scale(1.1) rotate(-3deg);
+}
+
+/* --- HEADER --- */
+.card-header {
+  text-align: center;
+  padding: 0 2rem 1.5rem 2rem;
+}
+
+.card-header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 800;
+  background: var(--gradient-main);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.card-header p {
+  margin: 0.5rem 0 0 0;
+  color: #888;
+  font-size: 0.95rem;
+}
+
+/* --- FORMULAIRE --- */
+.auth-form {
+  padding: 0 2rem 1rem 2rem;
+}
+
+.field {
+  margin-bottom: 1.5rem;
+}
+
+.field label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Input Styles */
+.field input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 1rem;
+  color: var(--text-dark);
+  border: 2px solid #eef2f5;
+  border-radius: 12px;
+  background-color: var(--bg-input);
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.field input:focus {
+  outline: none;
+  background-color: #fff;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 4px rgba(105, 158, 142, 0.15);
+}
+
+/* --- BOUTON --- */
+.btn-submit {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  background: #699E8E; /* Couleur demandée */
+  box-shadow: 0 8px 20px rgba(57, 108, 129, 0.25);
+  transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+  margin-top: 0.5rem;
+}
+
+.btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(57, 108, 129, 0.35);
+  background: #5a8a7b; /* Légèrement plus foncé au survol */
+}
+
+.btn-submit:active {
+  transform: scale(0.98);
+}
+
+/* --- BANNIÈRE ERREUR --- */
+.error-banner {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  padding: 0.8rem;
+  margin-bottom: 1.5rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  text-align: center;
+  border: 1px solid #fecaca;
+}
+
+/* --- FOOTER LINKS --- */
+.footer-links {
+  text-align: center;
+  padding: 1.5rem 1.5rem 0.5rem 1.5rem;
+}
+
+.footer-links a {
+  color: #666;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+
+.footer-links strong {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.footer-links a:hover strong {
+  color: var(--color-accent);
+}
+
+/* --- HINT BOX (Spécifique Login) --- */
+.hint-box {
+  background-color: #f4f6f8;
+  padding: 1rem;
+  text-align: center;
+  border-top: 1px solid #ebedf0;
+  color: #9aa0ac;
+  font-size: 0.75rem;
+  margin-top: 1rem;
+}
+
+/* --- RESPONSIVE MOBILE --- */
+@media (max-width: 480px) {
+  .auth-container {
+    padding: 0;
+    align-items: flex-end; /* Effet tiroir bas */
+    overflow-y: hidden;
+  }
+
+  .auth-card {
+    border-radius: 24px 24px 0 0;
+    max-width: 100%;
+    min-height: 85vh; /* Prend la majorité de l'écran */
+    box-shadow: none;
+    margin: 0;
+  }
+
+  .logo-img {
+    max-width: 100px;
+  }
+  
+  .card-header {
+    padding-bottom: 1rem;
+  }
+}

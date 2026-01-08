@@ -1,0 +1,234 @@
+/* --- VARIABLES --- */
+:root {
+  --color-primary: #396C81;
+  --color-accent: #699E8E;
+  --gradient-main: linear-gradient(135deg, #396C81 0%, #699E8E 100%);
+  --text-dark: #333;
+  --bg-input: #f9f9f9;
+}
+
+/* Animation douce à l'arrivée */
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- CONTENEUR GLOBAL --- */
+.auth-container {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gradient-main);
+  padding: 1rem;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+/* --- LA CARTE --- */
+.auth-card {
+  background: white;
+  width: 100%;
+  max-width: 480px; /* Largeur idéale */
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  position: relative;
+  /* Active l'animation */
+  animation: slideIn 0.6s ease-out;
+}
+
+/* --- LOGO --- */
+.logo-container {
+  text-align: center;
+  padding-top: 2rem; /* Espace en haut */
+  padding-bottom: 0.5rem;
+}
+
+.logo-img {
+  max-width: 120px; /* Taille contrôlée */
+  height: auto;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.logo-img:hover {
+  transform: scale(1.1) rotate(-3deg); /* Petit effet sympa au survol */
+}
+
+/* --- HEADER --- */
+.card-header {
+  text-align: center;
+  padding: 0 2rem 1.5rem 2rem;
+}
+
+.card-header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 800;
+  background: var(--gradient-main);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.card-header p {
+  margin: 0.5rem 0 0 0;
+  color: #888;
+  font-size: 0.95rem;
+}
+
+/* --- FORMULAIRE --- */
+.auth-form {
+  padding: 0 2rem 2rem 2rem;
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+}
+
+.form-row .field {
+  flex: 1;
+}
+
+.field {
+  margin-bottom: 1.2rem;
+}
+
+.field label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Input Styles */
+.field input, .field select {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 0.95rem;
+  color: var(--text-dark);
+  border: 2px solid #eef2f5;
+  border-radius: 12px;
+  background-color: var(--bg-input);
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  appearance: none; 
+}
+
+.field input:focus, .field select:focus {
+  outline: none;
+  background-color: #fff;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 4px rgba(105, 158, 142, 0.15);
+}
+
+/* Custom Select Arrow */
+.field select {
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23396C81%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 0.65em auto;
+  cursor: pointer;
+}
+
+/* --- BOUTON --- */
+.btn-submit {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  background: #699E8E; /* Couleur demandée */
+  box-shadow: 0 8px 20px rgba(57, 108, 129, 0.25);
+  transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+  margin-top: 1rem;
+}
+
+.btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(57, 108, 129, 0.35);
+  background: #5a8a7b; /* Légèrement plus foncé au survol */
+}
+
+.btn-submit:active {
+  transform: scale(0.98);
+}
+
+/* --- BANNIÈRE ERREUR --- */
+.error-banner {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  padding: 0.8rem;
+  margin: 0 2rem 1rem 2rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  text-align: center;
+  border: 1px solid #fecaca;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* --- FOOTER LINKS --- */
+.footer-links {
+  text-align: center;
+  padding: 1.5rem;
+  background-color: #fcfcfc;
+  border-top: 1px solid #f0f0f0;
+}
+
+.footer-links a {
+  color: #666;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+
+.footer-links strong {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.footer-links a:hover strong {
+  color: var(--color-accent);
+}
+
+/* --- RESPONSIVE MOBILE --- */
+@media (max-width: 480px) {
+  .auth-container {
+    padding: 0;
+    align-items: flex-start;
+    overflow-y: auto;
+  }
+
+  .auth-card {
+    border-radius: 0;
+    max-width: 100%;
+    min-height: 100vh;
+    box-shadow: none;
+    margin: 0;
+  }
+
+  /* Sur mobile, on réduit un peu le logo pour gagner de la place */
+  .logo-img {
+    max-width: 100px;
+  }
+  
+  .card-header {
+    padding-bottom: 1rem;
+  }
+
+  /* Passage des champs en colonne unique sur petit écran */
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}

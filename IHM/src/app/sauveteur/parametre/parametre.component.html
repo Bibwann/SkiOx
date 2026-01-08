@@ -1,0 +1,39 @@
+<div id="container">
+
+  <a routerLink="/sauveteur/compte" routerLinkActive="active" class="btn-link">
+    <div class="container-item">
+      <span>Compte</span>
+      <span class="icon">
+        <img src="/icons/fleche.png" alt="" />
+      </span>
+    </div>
+  </a>
+
+  <a routerLink="/sauveteur/skiox" routerLinkActive="active" class="btn-link">
+    <div class="container-item">
+      <span>SkiOx</span>
+      <span class="icon">
+        <img src="/icons/fleche.png" alt="" />
+      </span>
+    </div>
+  </a>
+
+  <a routerLink="/sauveteur/infos-sante" routerLinkActive="active" class="btn-link">
+    <div class="container-item">
+      <span>Infos santé</span>
+      <span class="icon">
+        <img src="/icons/fleche.png" alt="" />
+      </span>
+    </div>
+  </a>
+
+  <a href="#" (click)="logout(); $event.preventDefault()" class="btn-link" role="button">
+    <div class="container-item container-item--danger" style="background-color: #C0392B;">
+      <span>Se déconnecter</span>
+      <span class="icon" style="background-color: #E57373;">
+        <img src="/icons/fleche.png" alt="" />
+      </span>
+    </div>
+  </a>
+
+</div>

@@ -1,0 +1,134 @@
+
+/* Container principal */
+#container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+/* Styles généraux pour toutes les sections */
+#container > div {
+  background: #f0f0f0;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Nom utilisateur */
+#container-nom-user {
+  font-weight: 700;
+  font-size: 2rem;
+  color: #333;
+
+  p {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+}
+
+/* Sélection station */
+#container-station select {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+/* Météo / avalanche */
+#container-meteo-avalanche {
+  .meteo-card {
+    background-color: #699E8E; /* Fond vert exact */
+    color: #fff;
+    border-radius: 1rem;
+    padding: 1rem;
+
+    .card-title {
+      font-weight: 600;
+      font-size: 1rem;
+      letter-spacing: 0.3px;
+    }
+
+    .badge-light {
+      background-color: #fff !important;
+      color: #396C81 !important;
+      font-weight: 600;
+    }
+
+    .border-opacity-25 {
+      opacity: 0.25;
+    }
+  }
+}
+
+/* Skiox */
+#container-skiox-connecte {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+
+  .skiox-label {
+    color: #6c757d;
+    font-size: 0.85rem;
+  }
+
+  .skiox-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  .skiox-button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 12px;
+    background-color: #007bff;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: #0056b3;
+    }
+  }
+}
+
+/* Constantes (cards séparées possibles) */
+#container-constantes {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.metric-card {
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.metric-label {
+  display: block;
+  color: #6c757d;
+  font-size: 0.85rem;
+}
+
+.metric-value {
+  display: block;
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.metric-unit {
+  font-size: 0.85rem;
+  color: #6c757d;
+}
+
+.bg-danger-subtle { background-color: #fde2e2; }
+.border-danger-subtle { border-color: #f8b4b4; }
+.bg-success-subtle { background-color: #e6f4ea; }
+.border-success-subtle { border-color: #b7e1c0; }

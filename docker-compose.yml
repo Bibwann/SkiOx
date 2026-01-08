@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+  db:
+    profiles: ["bdd", "api"]
+    image: mysql:8.0
+    container_name: mysql_ski
+    restart: always
+    env_file:
+      - ./Back/BDD/.env
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./Back/BDD/init:/docker-entrypoint-initdb.d
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 30s
+    networks:
+      - skiox_network
+
+  phpmyadmin:
+    profiles: ["bdd"]
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: phpmyadmin_ski
+    restart: always
+    env_file:
+      - ./Back/BDD/.env
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    networks:
+      - skiox_network
+
+  api:
+    profiles: ["api"]
+    build:
+      context: ./Back/API
+      dockerfile: Dockerfile
+    container_name: skiox_api
+    restart: unless-stopped
+    env_file:
+      - ./Back/BDD/.env
+    environment:
+      - PORT=3000
+      - DB_HOST=db
+      - DB_NAME=skiox
+      - DB_USER=skiox_user
+      - DB_PASSWORD=skiox_pass
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - skiox_network
+
+  ihm:
+    profiles: ["ihm"]
+    build:
+      context: ./IHM
+      dockerfile: Dockerfile
+    container_name: skiox_ihm
+    restart: unless-stopped
+    ports:
+      - "4200:4200"
+    networks:
+      - skiox_network
+
+networks:
+  skiox_network:
+
+volumes:
+  mysql_data:

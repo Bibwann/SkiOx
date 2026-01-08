@@ -1,0 +1,36 @@
+<div class="container mt-3">
+  <div id="container" class="mb-4">
+    <a routerLink="/sportif/parametre" class="btn-link">
+      <div class="container-item">
+        <span class="icon"><img src="/icons/fleche.png" alt="" /></span>
+        <span>Infos Santé</span>
+      </div>
+    </a>
+  </div>
+
+  <div *ngIf="message" class="alert alert-success">{{ message }}</div>
+
+  <form (ngSubmit)="save()">
+    <div class="mb-3">
+      <label class="form-label">Groupe sanguin</label>
+      <select class="form-select" name="groupe_sanguin" [(ngModel)]="user.groupe_sanguin">
+        <option value="">Sélectionner</option>
+        <option value="A+">A+</option>
+        <option value="A-">A-</option>
+        <option value="B+">B+</option>
+        <option value="B-">B-</option>
+        <option value="O+">O+</option>
+        <option value="O-">O-</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Pathologies</label>
+      <textarea class="form-control" rows="3" name="pathologies" [(ngModel)]="user.pathologies"></textarea>
+    </div>
+    <div class="mb-4">
+      <label class="form-label">Traitements</label>
+      <textarea class="form-control" rows="3" name="traitements" [(ngModel)]="user.traitements"></textarea>
+    </div>
+    <button type="submit" class="btn btn-danger w-100">Mettre à jour la fiche urgence</button>
+  </form>
+</div>

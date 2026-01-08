@@ -1,0 +1,50 @@
+#container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Styles pour tous les liens cliquables */
+.btn-link {
+  width: 85%;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Les autres blocs cliquables */
+.container-item {
+  width: 100%;
+  background-color: #396C81;
+  color: white;
+  padding: 12px;
+  border-radius: 12px;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.icon {
+  transform: rotate(-90deg);
+  background: #699E8E;
+  border-radius: 50%;
+}
+
+.icon img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+/* Variante rouge pour le bouton de déconnexion */
+.container-item--danger {
+  background-color: #C0392B;
+}
+
+.container-item--danger .icon {
+  background: #E57373;
+}

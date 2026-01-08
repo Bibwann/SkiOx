@@ -1,0 +1,12 @@
+# Données MySQL (générées par le conteneur)
+data/
+data/mysql/
+data/mysql/**
+
+
+
+# Fichiers d'OS / éditeurs (au cas où)
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

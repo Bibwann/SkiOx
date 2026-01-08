@@ -1,0 +1,39 @@
+<div class="container mt-3">
+  <div id="container" class="mb-4">
+    <a routerLink="/sauveteur/parametre" class="btn-link">
+      <div class="container-item">
+        <span class="icon"><img src="/icons/fleche.png" alt="" /></span>
+        <span>Compte</span>
+      </div>
+    </a>
+  </div>
+
+  <div *ngIf="message" class="alert alert-info">{{ message }}</div>
+
+  <form (ngSubmit)="save()">
+    <div class="mb-3">
+      <label class="form-label">Nom</label>
+      <input type="text" class="form-control" name="nom" [(ngModel)]="user.nom" />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Prénom</label>
+      <input type="text" class="form-control" name="prenom" [(ngModel)]="user.prenom" />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Date de naissance</label>
+      <input type="date" class="form-control" name="date_naissance" [(ngModel)]="user.date_naissance" />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Sexe</label>
+      <select class="form-select" name="sexe" [(ngModel)]="user.sexe">
+        <option [ngValue]="1">Homme</option>
+        <option [ngValue]="0">Femme</option>
+      </select>
+    </div>
+    <div class="mb-4">
+      <label class="form-label">Email</label>
+      <input type="email" class="form-control" name="email" [(ngModel)]="user.email" />
+    </div>
+    <button type="submit" class="btn btn-outline-secondary w-100">Enregistrer</button>
+  </form>
+</div>

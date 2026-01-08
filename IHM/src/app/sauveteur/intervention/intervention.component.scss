@@ -1,0 +1,13 @@
+
+.card {
+  border-radius: 12px;
+}
+
+.btn {
+  border-width: 2px;
+  border-radius: 8px;
+}
+
+/* Badge subtile (si votre version Bootstrap ne gère pas *-subtle) */
+.bg-danger-subtle { background-color: #fde2e2; }
+.border-danger-subtle { border-color: #f8b4b4; }

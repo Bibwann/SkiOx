@@ -1,0 +1,42 @@
+<div class="auth-container">
+  <div class="auth-card login-mode">
+    
+    <div class="logo-container">
+      <img src="icons/LogoSkiOx.PNG" alt="SkiOx Logo" class="logo-img">
+    </div>
+    
+    <div class="card-header">
+      <h1>Bienvenue</h1>
+      <p>Connectez-vous à votre espace montagne</p>
+    </div>
+    
+    <form (ngSubmit)="onSubmit()" class="auth-form">
+      <div class="field">
+        <label for="username">Utilisateur</label>
+        <input id="username" name="username" [(ngModel)]="username" placeholder="ex: sauveteur" required />
+      </div>
+
+      <div class="field">
+        <label for="password">Mot de passe</label>
+        <input id="password" name="password" type="password" [(ngModel)]="password" placeholder="••••••••" required />
+      </div>
+
+      <div class="error-banner" *ngIf="error">
+        {{ error }}
+      </div>
+
+      <button type="submit" class="btn-submit">
+        Se connecter
+      </button>
+    </form>
+
+    <div class="footer-links">
+      <a routerLink="/register">Pas de compte ? <strong>S'inscrire</strong></a>
+    </div>
+
+    <div class="hint-box">
+      <small>DÉMO : Sauveteur (TOTO/TOTO) • Sportif (TITI/TITI)</small>
+    </div>
+
+  </div>
+</div>

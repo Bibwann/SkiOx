@@ -1,0 +1,25 @@
+{
+  "name": "skiox-api",
+  "version": "0.1.0",
+  "description": "Minimal Express API template for SkiOx project",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "test": "jest --verbose"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "morgan": "^1.10.0",
+    "mysql2": "^3.16.0",
+    "prom-client": "^15.1.3",
+    "serialport": "^13.0.0"
+  },
+  "devDependencies": {
+    "jest": "^30.2.0",
+    "nodemon": "^2.0.22",
+    "supertest": "^7.1.4"
+  },
+  "license": "MIT"
+}
