@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql_ski
+    restart: always
+    environment:
+      MYSQL_DATABASE: skiox_db
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: skiox_user
+      MYSQL_PASSWORD: skiox_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./Back/BDD/init:/docker-entrypoint-initdb.d 
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    networks:
+      - skiox_network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: phpmyadmin_ski
+    restart: always
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "8081:80"
+    depends_on:
+      - db
+    networks:
+      - skiox_network
+
+  api:
+    image: valentin645/skiox:api
+    container_name: skiox_api
+    restart: unless-stopped
+    environment:
+      - PORT=3000
+      - DB_HOST=db
+      - DB_NAME=skiox_db
+      - DB_USER=skiox_user
+      - DB_PASSWORD=skiox_password
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    networks:
+      - skiox_network
+      - monitor-net
+
+  ihm:
+    image: valentin645/skiox:ihm
+    container_name: skiox_ihm
+    restart: unless-stopped
+    ports:
+      - "80:80" 
+    networks:
+      - skiox_network
+      
+
+networks:
+  skiox_network:
+  monitor-net:
+    external: true
+    name: infra_monitor-net
+    
+volumes:
+  mysql_data:

@@ -1,0 +1,169 @@
+<div class="container-fluid bg-light min-vh-100 p-3">
+
+  <div class="card shadow-sm mb-3 border-0">
+    <div class="card-body">
+      <label for="stationSelect" class="form-label">Station</label>
+      <select id="stationSelect" class="form-select" [(ngModel)]="selectedStationId" (change)="onStationChange()">
+        <option *ngFor="let station of stations" [value]="station.id">
+          {{ station.nom }}
+        </option>
+      </select>
+      <div *ngIf="selectedStation" class="mt-2">
+        <small class="text-muted">Localisation</small>
+        <div class="fw-bold">{{ selectedStation.nom }}, {{ selectedStation.localisation }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow border-0 bg-primary text-white mb-3">
+    <div class="card-body">
+      <h6 class="card-title text-center mb-3">Météo / Risque avalanche</h6>
+
+      <div *ngIf="meteoLoading" class="text-center py-3">
+        <div class="spinner-border spinner-border-sm" role="status">
+          <span class="visually-hidden">Chargement...</span>
+        </div>
+        <small class="d-block mt-2">Chargement...</small>
+      </div>
+
+      <div *ngIf="!meteoLoading && meteo" class="row g-2">
+        <div class="col-12">
+          <div class="d-flex justify-content-between align-items-center py-2 border-bottom border-white
+  border-opacity-25">
+            <span>Température</span>
+            <span class="badge bg-light text-primary fs-6">{{ meteo.temperature }}°C</span>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="d-flex justify-content-between align-items-center py-2 border-bottom border-white
+  border-opacity-25">
+            <span>Conditions</span>
+            <span class="badge bg-light text-primary">{{ translateCondition(meteo.condition) }}</span>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="d-flex justify-content-between align-items-center py-2">
+            <span>Risque avalanche</span>
+            <span class="badge" [ngClass]="{
+                'bg-success': meteo.risqueAvalanche === 'Faible',
+                'bg-warning': meteo.risqueAvalanche === 'Modéré',
+                'bg-danger': meteo.risqueAvalanche === 'Élevé' || meteo.risqueAvalanche === 'Très élevé'
+              }">{{ meteo.risqueAvalanche }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="!meteoLoading && !meteo">
+        <p class="text-center mb-0">Données météo non disponibles</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm mb-3 border-0">
+    <div class="card-body">
+      <h6 class="mb-3">Équipements disponibles à la station</h6>
+
+      <div *ngIf="stationEquipmentsLoading" class="text-center py-3">
+        <div class="spinner-border spinner-border-sm" role="status"></div>
+      </div>
+
+      <div *ngIf="!stationEquipmentsLoading" class="row g-2">
+        <div *ngFor="let equipment of stationEquipments" class="col-6">
+          <div class="equipment-card p-3 border rounded position-relative">
+            <div class="text-center mb-3 mt-2">
+              <strong>{{ equipment.name }}</strong>
+            </div>
+
+            <div class="text-center">
+              <span class="badge bg-success">✓ Disponible</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="!stationEquipmentsLoading && stationEquipments.length === 0" class="text-center py-3
+  text-muted">
+        Aucun équipement disponible à la station
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm mb-3 border-0">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h6 class="mb-0">Mes équipements</h6>
+        <button class="btn btn-sm btn-primary" (click)="showAddUserEquipmentModal =
+  !showAddUserEquipmentModal">
+          Ajouter +
+        </button>
+      </div>
+
+      <div *ngIf="showAddUserEquipmentModal" class="mb-3 p-3 bg-light rounded">
+        <h6 class="small mb-2">Sélectionner un équipement :</h6>
+        <div class="d-grid gap-2">
+          <button *ngFor="let equipment of allEquipments" class="btn btn-outline-primary btn-sm text-start"
+            [disabled]="isEquipmentInUserProfile(equipment.id)"
+            (click)="addEquipmentToUser(equipment.id); showAddUserEquipmentModal = false">
+            {{ equipment.name }}
+            <span *ngIf="isEquipmentInUserProfile(equipment.id)" class="badge bg-success float-end">Déjà
+              ajouté</span>
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="userEquipmentsLoading" class="text-center py-3">
+        <div class="spinner-border spinner-border-sm" role="status"></div>
+      </div>
+
+      <div *ngIf="!userEquipmentsLoading" class="row g-2">
+        <div *ngFor="let equipment of userEquipments" class="col-6">
+          <div class="equipment-card p-3 border rounded position-relative">
+            <div class="position-absolute top-0 end-0 m-2">
+              <button class="btn btn-sm btn-link text-danger p-0" (click)="confirmDeleteEquipment(equipment.id, 'user')" title="Supprimer">
+                ✕
+              </button>
+            </div>
+
+            <div class="text-center mb-3 mt-2">
+              <strong>{{ equipment.name }}</strong>
+            </div>
+
+            <div class="text-center">
+              <span *ngIf="isEquipmentInStation(equipment.id)" class="badge bg-success">
+                ✓ Disponible
+              </span>
+              <span *ngIf="!isEquipmentInStation(equipment.id)" class="badge bg-danger">
+                Non dispo
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="!userEquipmentsLoading && userEquipments.length === 0" class="text-center py-3
+  text-muted">
+        Aucun équipement dans votre profil
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="equipmentToDelete" class="modal-backdrop" (click)="cancelDelete()"></div>
+  <div *ngIf="equipmentToDelete" class="modal d-block" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirmer la suppression</h5>
+          <button type="button" class="btn-close" (click)="cancelDelete()"></button>
+        </div>
+        <div class="modal-body">
+          <p>Êtes-vous sûr de vouloir supprimer cet équipement ?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="cancelDelete()">Annuler</button>
+          <button type="button" class="btn btn-danger" (click)="deleteEquipment()">Supprimer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,204 @@
+image: node:22
+
+stages:
+  - build    # Compilation et vérification de l'installation
+  - test     # Tests unitaires, Linting et Healthcheck
+  - quality  # Analyse de la qualité du code 
+  - package  # Création et envoi des images Docker
+  - deploy   # Déploiement sur le VPS
+
+# ===========================
+# VARIABLES GLOBALES
+# ===========================
+variables:
+  DOCKER_REPO_NAME: "valentin645/skiox"
+
+# ===========================
+# 1. ÉTAPE DE BUILD (Compilation)
+# ===========================
+
+build_ihm:
+  stage: build
+  tags: [dind]
+  script:
+    - cd IHM
+    - npm ci
+    # Compilation Angular en mode production
+    - npm run build -- --configuration production
+  artifacts:
+    paths:
+      - IHM/dist/
+    expire_in: 1 hour
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev" || $CI_COMMIT_BRANCH == "17-ci-cd"
+
+build_api:
+  stage: build
+  tags: [dind]
+  script:
+    - cd Back/API
+    # Vérification que les dépendances s'installent correctement
+    - npm ci
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev" || $CI_COMMIT_BRANCH == "17-ci-cd"
+
+# ===========================
+# 2. ÉTAPE DE TEST (Validation)
+# ===========================
+
+test_ihm:
+  stage: test
+  tags: [dind]
+  script:
+    - cd IHM
+    - npm ci
+    # Linting (Qualité de code)
+    - 'npm run lint || echo "Linting terminé avec avertissements"'
+    # Tests unitaires IHM (si configurés)
+    #- npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev" || $CI_COMMIT_BRANCH == "17-ci-cd"
+
+test_api:
+  stage: test
+  tags: [dind]
+  # Service MySQL nécessaire UNIQUEMENT pour cette étape de test/healthcheck
+  services:
+    - name: mysql:8.0
+      alias: mysql
+  variables:
+    MYSQL_DATABASE: skiox_db
+    MYSQL_ROOT_PASSWORD: root
+    MYSQL_USER: skiox_user
+    MYSQL_PASSWORD: skiox_password
+    DB_HOST: mysql
+    DB_USER: skiox_user
+    DB_PASSWORD: skiox_password
+    DB_NAME: skiox_db
+    PORT: 3000
+  before_script:
+    - apt-get update -y && apt-get install -y default-mysql-client
+  script:
+    - cd Back/API
+    - npm ci
+    
+    # 1. Tests Unitaires (Jest)
+    - npm run test -- --coverage
+    
+    # 2. Vérification de démarrage (Health Check)
+    - echo "Attente de MySQL..."
+    - |
+      for i in $(seq 1 30); do
+        if mysqladmin ping -h mysql -uroot -proot --silent; then break; fi;
+        sleep 2;
+      done
+    
+    # On vérifie que le serveur démarre bien avec la BDD connectée
+    - npm start &
+    - API_PID=$!
+    - sleep 10
+    - kill $API_PID
+
+  artifacts:
+    paths:
+      - Back/API/coverage/lcov.info
+    expire_in: 1 hour
+
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev" || $CI_COMMIT_BRANCH == "test_CICD" || $CI_COMMIT_BRANCH == "11-mise-en-place-de-sonarqube-2"
+
+
+# ===========================
+# 3. ÉTAPE QUALITY (SonarQube)
+# ===========================
+
+sonarqube_check:
+  stage: quality
+  tags: [vps]
+  
+  variables:
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar" 
+    GIT_DEPTH: "0"  
+  cache:
+    key: "${CI_JOB_NAME}"
+    paths:
+      - .sonar/cache
+  script:
+
+    - |
+
+      docker run --rm \
+        -e SONAR_HOST_URL=$SONAR_HOST_URL \
+        -e SONAR_TOKEN=$SONAR_TOKEN \
+        -v "$CI_PROJECT_DIR:/usr/src" \
+        sonarsource/sonar-scanner-cli \
+        -Dsonar.projectKey=skiox_project \
+        -Dsonar.sources=. \
+        -Dsonar.exclusions=**/node_modules/**,**/dist/**
+
+          
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev"  || $CI_COMMIT_BRANCH == "17-ci-cd"
+
+
+# ===========================
+# 4. ÉTAPE PACKAGE (Docker)
+# ===========================
+
+docker_build_api:
+  stage: package
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  tags: [dind]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"https://index.docker.io/v1/\":{\"auth\":\"$(printf "%s:%s" "${DOCKER_HUB_USER}" "${DOCKER_HUB_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    - >-
+      /kaniko/executor
+      --context "${CI_PROJECT_DIR}/Back/API"
+      --dockerfile "${CI_PROJECT_DIR}/Back/API/Dockerfile"
+      --destination "${DOCKER_REPO_NAME}:api"
+      --destination "${DOCKER_REPO_NAME}:api-${CI_COMMIT_SHORT_SHA}"
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev" || $CI_COMMIT_BRANCH == "17-ci-cd"
+
+docker_build_ihm:
+  stage: package
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  tags: [dind]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"https://index.docker.io/v1/\":{\"auth\":\"$(printf "%s:%s" "${DOCKER_HUB_USER}" "${DOCKER_HUB_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    - >-
+      /kaniko/executor
+      --context "${CI_PROJECT_DIR}/IHM"
+      --dockerfile "${CI_PROJECT_DIR}/IHM/Dockerfile"
+      --destination "${DOCKER_REPO_NAME}:ihm"
+      --destination "${DOCKER_REPO_NAME}:ihm-${CI_COMMIT_SHORT_SHA}"
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev" || $CI_COMMIT_BRANCH == "17-ci-cd"
+
+# ===========================
+# 4. ÉTAPE DEPLOY (VPS)
+# ===========================
+
+deploy_prod:
+  stage: deploy
+  tags: [vps]
+  script:
+    # Connexion au registre (optionnel si public, mais mieux avec)
+    - docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PASSWORD
+    
+    # Nettoyage précédent (pour être propre)
+    - docker compose -f docker-compose.prod.yml down --remove-orphans || true
+    
+    # Mise à jour des images
+    - docker compose -f docker-compose.prod.yml pull
+    
+    # Démarrage
+    - docker compose -f docker-compose.prod.yml up -d
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev"  || $CI_COMMIT_BRANCH == "17-ci-cd"

@@ -1,0 +1,107 @@
+<div class="container-fluid p-3">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Tableau de bord</h2>
+    
+    <div class="d-flex align-items-center">
+      <select id="stationSelect" class="form-select me-3" style="width: auto;" 
+              [(ngModel)]="selectedStationId" (change)="onStationChange()">
+        <option *ngFor="let station of stations" [value]="station.id">
+          {{ station.nom }}
+        </option>
+      </select>
+      <button class="btn btn-outline-danger" (click)="logout()">
+        <i class="bi bi-power"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-header bg-white fw-bold">
+          Météo Station
+        </div>
+        <div class="card-body">
+          <div *ngIf="meteoLoading" class="text-center py-4">
+            <div class="spinner-border text-primary" role="status"></div>
+          </div>
+          
+          <div *ngIf="!meteoLoading && meteo">
+            <div class="d-flex justify-content-between mb-3">
+              <span>Température</span>
+              <span class="fw-bold">{{ meteo.temperature }}°C</span>
+            </div>
+            <div class="d-flex justify-content-between mb-3">
+              <span>Vent</span>
+              <span class="fw-bold">{{ meteo.windSpeed }} km/h</span>
+            </div>
+            <div class="d-flex justify-content-between mb-3">
+              <span>Condition</span>
+              <span class="badge bg-info text-dark">{{ translateCondition(meteo.condition) }}</span>
+            </div>
+            <div class="mt-3 pt-3 border-top">
+              <div class="d-flex justify-content-between align-items-center">
+                <span>Risque Avalanche</span>
+                <span class="badge bg-warning text-dark fs-6">{{ meteo.risqueAvalanche }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100 shadow-sm border-danger">
+        <div class="card-header bg-danger text-white fw-bold d-flex justify-content-between">
+          <span>Dernière Alerte</span>
+          <span class="badge bg-white text-danger" *ngIf="latestId">En cours</span>
+        </div>
+        <div class="card-body">
+            <div *ngIf="latestVictime; else noAlert">
+                <h5 class="card-title">{{ latestVictime.prenom }} {{ latestVictime.nom }}</h5>
+                <p class="card-text text-muted mb-4">
+                    Signalement à {{ latestVictime.heure_debut | date:'HH:mm' }}
+                </p>
+                
+                <div class="d-grid gap-2">
+                    <a [routerLink]="['/sauveteur/intervention', latestId]" class="btn btn-danger">
+                        Voir l'intervention
+                    </a>
+                </div>
+            </div>
+            <ng-template #noAlert>
+                <div class="text-center py-4 text-muted">
+                    <i class="bi bi-check-circle fs-1 d-block mb-2"></i>
+                    Aucune alerte en cours
+                </div>
+            </ng-template>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-header bg-white fw-bold">
+          État Système
+        </div>
+        <div class="card-body">
+            <div class="d-flex justify-content-between mb-3">
+                <span>Batterie Appareil</span>
+                <span class="text-success fw-bold">{{ skiox.battery }}%</span>
+            </div>
+            <div class="d-flex justify-content-between mb-3">
+                <span>Mode Recherche</span>
+                <span [class]="skiox.armed ? 'text-danger fw-bold' : 'text-muted'">
+                    {{ skiox.armed ? 'ACTIF' : 'INACTIF' }}
+                </span>
+            </div>
+            <div class="d-grid mt-4">
+                <button class="btn" [ngClass]="skiox.armed ? 'btn-outline-dark' : 'btn-outline-danger'" (click)="toggleArm()">
+                    {{ skiox.armed ? 'Désactiver le mode recherche' : 'Activer le mode recherche' }}
+                </button>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

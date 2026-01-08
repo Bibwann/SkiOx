@@ -1,0 +1,65 @@
+# Node modules (root and subfolders)
+node_modules/
+**/node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# Runtime data
+pids/
+*.pid
+*.seed
+
+# Build / output
+dist/
+build/
+out/
+out-tsc/
+coverage/
+.cache/
+.tmp/
+
+# Environment files (keep examples)
+.env
+.env.local
+.env.*.local
+!.env.example
+!BDD/.env
+!Back/API/.env
+
+# OS files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# IDE / editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# TypeScript
+*.tsbuildinfo
+
+# Angular
+.angular/
+.angular/cache/
+
+# Docker
+docker-compose.override.yml
+
+# Misc
+*.tgz
+*.bak
+*.cache
+
+# Keep Swagger/OpenAPI definitions and examples tracked (don't ignore .yaml/.yml)
+# Exemples dans ce dépôt : `Docs/swaggerui/swagger.yaml` et autres fichiers de spec

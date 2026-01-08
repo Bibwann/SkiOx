@@ -1,0 +1,403 @@
+openapi: 3.0.0
+info:
+  title: API Suivi Activités & IoT
+  version: 1.0.0
+  description: API de gestion des utilisateurs, équipements, stations et remontée de données IoT.
+
+servers:
+  - url: http://localhost:3000
+    description: Serveur de développement
+
+tags:
+  - name: Auth
+    description: Authentification et Inscription
+  - name: Utilisateurs
+    description: Gestion du profil sportif et équipements
+  - name: Stations
+    description: Gestion des stations et équipements associés
+  - name: IoT
+    description: Remontée de données capteurs et alertes
+
+paths:
+  # ==========================
+  # AUTHENTIFICATION
+  # ==========================
+  /auth/register:
+    post:
+      summary: Créer un compte utilisateur
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegister'
+      responses:
+        '201':
+          description: Utilisateur créé avec succès
+        '400':
+          description: Données invalides
+
+  /auth/login:
+    post:
+      summary: Connexion utilisateur
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nom:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Connexion réussie (Retourne un Token JWT fictif)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+
+ 
+  /users/{userId}/equipments:
+    get:
+      summary: Récupérer la liste des équipements du sportif
+      tags:
+        - Utilisateurs
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: integer
+          required: true
+          description: ID de l'utilisateur
+      responses:
+        '200':
+          description: Liste des équipements de l'utilisateur
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Equipement'
+
+    post:
+      summary: Ajouter un équipement au profil du sportif
+      tags:
+        - Utilisateurs
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: integer
+          required: true
+          description: ID de l'utilisateur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_equipement:
+                  type: integer
+      responses:
+        '201':
+          description: Équipement lié à l'utilisateur
+
+    delete:
+      summary: Supprimer un équipement du profil sportif
+      tags:
+        - Utilisateurs
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: integer
+          required: true
+        - in: query
+          name: id_equipement
+          schema:
+            type: integer
+          required: true
+          description: ID de l'équipement à détacher
+      responses:
+        '204':
+          description: Équipement supprimé du profil
+
+  # ==========================
+  # GESTION STATION
+  # ==========================
+  /stations:
+    get:
+      summary: Liste de toutes les stations
+      tags:
+        - Stations
+      responses:
+        '200':
+          description: Liste des stations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Station'
+
+  /stations/{stationId}/equipments:
+    get:
+      summary: Consulter les équipements d'une station
+      tags:
+        - Stations
+      parameters:
+        - in: path
+          name: stationId
+          schema:
+            type: integer
+          required: true
+          description: ID de la station
+      responses:
+        '200':
+          description: Liste des équipements de la station
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Equipement'
+
+    post:
+      summary: Ajouter un équipement à une station
+      tags:
+        - Stations
+      parameters:
+        - in: path
+          name: stationId
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_equipement:
+                  type: integer
+      responses:
+        '201':
+          description: Équipement ajouté à la station
+
+    delete:
+      summary: Supprimer un équipement d'une station
+      tags:
+        - Stations
+      parameters:
+        - in: path
+          name: stationId
+          schema:
+            type: integer
+          required: true
+        - in: query
+          name: id_equipement
+          schema:
+            type: integer
+          required: true
+      responses:
+        '204':
+          description: Équipement retiré de la station
+
+  /stations/{stationId}/activities:
+    get:
+      summary: Liste des activités avec alerte dans la station
+      description: Retourne uniquement les activités où le champ 'alerte' est égal à true pour la station donnée
+      tags:
+        - Stations
+      parameters:
+        - in: path
+          name: stationId
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: Liste des activités avec alerte active
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ActivityDetail'
+
+  /iot/activities/{activityId}/telemetry:
+    post:
+      summary: Envoyer la position et l'oxygène (IoT)
+      description: Enregistre une nouvelle position et simule la mise à jour de l'oxygène
+      tags:
+        - IoT
+      parameters:
+        - in: path
+          name: activityId
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                latitude:
+                  type: number
+                  format: double
+                  example: 48.8566
+                longitude:
+                  type: number
+                  format: double
+                  example: 2.3522
+                oxygen_remaining:
+                  type: integer
+                  description: Pourcentage ou temps restant (Fictif)
+                  example: 85
+                timestamp:
+                  type: string
+                  format: date-time
+      responses:
+        '201':
+          description: Données de télémétrie enregistrées
+
+  /iot/activities/{activityId}/alert:
+    post:
+      summary: Déclencher une alerte
+      description: Passe le champ 'alerte' à true pour l'activité donnée
+      tags:
+        - IoT
+      parameters:
+        - in: path
+          name: activityId
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: Alerte déclenchée avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "ALERT_TRIGGERED"
+                  activity_id:
+                    type: integer
+
+components:
+  schemas:
+    # Schéma pour l'inscription
+    UserRegister:
+      type: object
+      required:
+        - nom
+        - prenom
+        - id_roles
+        - password
+      properties:
+        nom:
+          type: string
+        prenom:
+          type: string
+        sexe:
+          type: boolean
+          description: true = Homme, false = Femme (selon convention)
+        date_naissance:
+          type: string
+          format: date
+        password:
+          type: string
+        id_roles:
+          type: integer
+
+    # Schéma de lecture utilisateur
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        nom:
+          type: string
+        prenom:
+          type: string
+        id_roles:
+          type: integer
+
+    # Schéma Activité (Avec les champs fictifs demandés)
+    ActivityDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+        date:
+          type: string
+          format: date
+        station_nom:
+          type: string
+        # Champ fictif demandé
+        id_station:
+          type: integer
+        # Champ fictif demandé
+        active :
+          type: boolean
+        alerte:
+          type: boolean
+        user:
+          $ref: '#/components/schemas/User'
+
+    # Schéma Station
+    Station:
+      type: object
+      properties:
+        id:
+          type: integer
+        nom:
+          type: string
+        localisation:
+          type: string
+
+    # Schéma Equipement
+    Equipement:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        link:
+          type: string
+
+    # Schéma Position
+    Position:
+      type: object
+      properties:
+        id:
+          type: integer
+        id_activity:
+          type: integer
+        latitude:
+          type: number
+        longitude:
+          type: number
+        timestamp:
+          type: string
+          format: date-time

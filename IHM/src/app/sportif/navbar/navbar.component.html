@@ -1,0 +1,30 @@
+<nav class="bottom-nav">
+  <ul>
+    <li>
+      <a routerLink="/sportif" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <span class="icon">
+          <!-- https://www.flaticon.com/fr/icones-gratuites/bouton-daccueil -->
+          <img src="/icons/maison.png" alt="" />
+        </span>
+      </a>
+    </li>
+
+    <li>
+      <a routerLink="/sportif/equipement" routerLinkActive="active">
+        <span class="icon">
+          <!-- https://www.flaticon.com/fr/icones-gratuites/lhiver -->
+          <img src="/icons/equipement.png" alt="" />
+        </span>
+      </a>
+    </li>
+
+    <li>
+      <a id="btn-navbar-parametre" routerLink="/sportif/parametre" routerLinkActive="active">
+        <span class="icon">
+          <!-- https://www.flaticon.com/fr/icones-gratuites/reglages -->
+          <img src="/icons/parametre.png" alt="" />
+        </span>
+      </a>
+    </li>
+  </ul>
+</nav>
